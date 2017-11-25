@@ -23,46 +23,52 @@ def build_sentences(db, seed, sentence=""):
     return sentence + db[" ".join(seed)]
 
 
-def make_quixote(db, seed):
-    local_seed = seed
+def make_quixote(db=None, seed=None, number=10):
+    if not db:
+        db = load_db_to_number_depth(number=number)
+    if not seed:
+        seed = dq[:(number * 50)].split(" ")[:number]
+    local_seed = seed[:]
+    count = 0
+    pr = True
     sentence = " ".join(local_seed)
     next_word = choice(db.get(sentence, [None]))
-    while next_word:
+    while next_word is not None:
+        count += 1
         sentence += " " + next_word
         if dq[:len(sentence)] != sentence:
+            print "LEN: " + str(len(sentence))
+            print "SEED: "
+            print local_seed
+            print "SEED AS STRING: " + " ".join(local_seed)
+            print count
+            pr = False
             break
         local_seed.pop(0)
         local_seed.append(next_word)
-        next_word = choice(db.get(" ".join(local_seed), [None]))
-    print sentence
+        next_word = choice(db.get(" ".join(local_seed), None))
+    if pr:
+        print sentence
     if dq == sentence:
         print "IT IS "
+    else:
+        print ""
+        print "LEN: " + str(len(sentence))
+        print "SEED: "
+        print local_seed
+        print "SEED AS STRING: " + " ".join(local_seed)
+        print count
 
 
-def load_db_to_number_depth(file="don-quixote.txt", number=2):
+def load_db_to_number_depth(number=2):
     db = defaultdict(list)
 
     words = dq.split(" ")
+    current_seq = words[:number]
 
-    variables = create_variable_sequence(number, words[:number])
-    keys = variables.keys()
-    print variables
-
-    for word in words[number:][:10]:
-        print "word: " + word
-        newkey = " ".join([variables[key] for key in sorted(keys)])
-        print "newkey: " + newkey
+    for word in words[number:]:
+        newkey = " ".join(current_seq)
         db[newkey].append(word)
-        for i in range(1, number):
-            variables["donquixote" + str(i)] = variables["donquixote" + str(i+1)]
-        variables["donquixote" + str(number)] = word
+        current_seq.pop(0)
+        current_seq.append(word)
     return db
-
-
-def create_variable_sequence(number, source_array):
-    vars_dict = {}
-    for i in range(number):
-        var = "donquixote" + str(i + 1)
-        vars_dict[var] = source_array[i]
-    return vars_dict
-
