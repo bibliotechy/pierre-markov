@@ -9,7 +9,7 @@ args = parser.parse_args()
 
 
 db = plyvel.DB(args.db, create_if_missing=True)
-dq = open("./don-quixote-tosed.txt").read().encode("utf8").split(b" ")
+dq = open("./don-quixote.txt").read().encode("utf8").split(b" ")
 
 
 def make_quixote():
