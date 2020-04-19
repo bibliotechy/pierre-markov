@@ -1,0 +1,9 @@
+#!/usr/bin/env python
+
+# This will eventually  keep trying to generate fragemtns until one meets the criteria of 
+# being the entirety of Quixote, which probably won't happen, but hey, Windmills
+from quix.quix import Quix
+
+dq = Quix()
+
+dq.generate_fragment()

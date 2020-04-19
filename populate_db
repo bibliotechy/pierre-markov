@@ -1,10 +1,11 @@
+#!/usr/bin/env python
 import bson
 import plyvel
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-f','--file', help='Text file to load into db', required=True)
-parser.add_argument('-d','--db', help='DB file to write to', required=True)
+parser.add_argument('-f','--file', help='Text file to load into db', default="don-quixote.txt")
+parser.add_argument('-d','--db', help='Directory where lveldb files will be created', default="dqdb")
 
 args = parser.parse_args()
 
