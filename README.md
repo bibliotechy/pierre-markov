@@ -1,6 +1,6 @@
 # Pierre Markov, Author of the Quixote
 
-Some python scripts to recreate the central absurdity of [Pierre Menard, Author of the Quixote](https://en.wikipedia.org/wiki/Pierre_Menard,_Author_of_the_Quixote) using variations on a markov chain. It biols down to a ptyhon command that will generate a fragment of Don Quixote from the text of Quixote itself. 
+Some python scripts to recreate the central absurdity of [Pierre Menard, Author of the Quixote](https://en.wikipedia.org/wiki/Pierre_Menard,_Author_of_the_Quixote) using variations on a markov chain. It boils down to a python command that will generate a fragment of Don Quixote from the text of Quixote itself. 
 
 
 ## Setup
