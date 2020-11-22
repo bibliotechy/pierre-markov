@@ -24,8 +24,7 @@ class Quix(object):
               self.generate_fragment()
           else:
               pass
-        print(self.fragment().decode("utf8"))
-        exit(0)
+        return(self.fragment().decode("utf8"))
 
 
     def values(self):

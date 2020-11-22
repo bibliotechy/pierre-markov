@@ -8,6 +8,6 @@ plyvel = "*"
 bson = "*"
 pytest = "*"
 nose2 = "*"
-
 # [dev-packages]
 # v = {editable = true,version = "*"}
+ipdb = "*"
