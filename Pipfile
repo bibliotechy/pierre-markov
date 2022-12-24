@@ -1,6 +1,7 @@
 [[source]]
 url = "https://pypi.python.org/simple"
 verify_ssl = true
+name = "pypi"
 
 [packages]
 ipython = "*"
@@ -8,6 +9,7 @@ plyvel = "*"
 bson = "*"
 pytest = "*"
 nose2 = "*"
-# [dev-packages]
-# v = {editable = true,version = "*"}
+flask = "*"
+
+[dev-packages]
 ipdb = "*"

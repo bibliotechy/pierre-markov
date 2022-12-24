@@ -1,0 +1,19 @@
+#!/usr/bin/env python
+
+import argparse
+
+from os import path, listdir
+from quix.quix import QuixSql
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-d','--db', help='Path to the sqlite db', default="dq.db")
+
+args = parser.parse_args()
+
+dq = QuixSql(db_path=args.db)
+
+fragment = dq.generate_fragment()
+
+print(f"From {fragment['chapter']}")
+print("--------------------------")
+print(fragment['fragment'])

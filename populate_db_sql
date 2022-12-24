@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+import sqlite3
+import argparse
+import glob
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-f','--files', help='Glob where text files with chapters can be found', default="dq-en/Book*")
+parser.add_argument('-d','--db', help='Path where sqlite DB will be created', default="dq.db")
+
+args = parser.parse_args()
+
+conn = sqlite3.connect(args.db,)
+cur = conn.cursor()
+
+if cur.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='ENGLISH'; """).fetchall() == []:
+    cur.execute("""CREATE TABLE ENGLISH(KEY VARCHAR(255), VALUE VARCHAR(255), COUNT int );""")
+    cur.execute("CREATE INDEX eng_key on english (key);")
+
+if cur.execute("""
+    SELECT name FROM sqlite_master WHERE type='table'
+    AND name='chapters'; """).fetchall() == []:
+    cur.execute("""CREATE TABLE chapters(chapter VARCHAR(255), text TEXT);""")
+
+def markovize_words(words):
+    w1, w2 = words.pop(0), words.pop(0)
+    for index, word in enumerate(words):
+        if index % 1000 == 0:
+            conn.commit()
+            print(f"working on word {index}")
+        try:
+            key = b' '.join([w1,w2]).decode('utf8')
+            already_key_and_value = cur.execute("SELECT * from ENGLISH WHERE key=? and value=?" , (key, word.decode('utf8'))).fetchone()
+            if already_key_and_value:
+                count = already_key_and_value[2] + 1
+                cur.execute("UPDATE ENGLISH SET count=? WHERE key=? and value=?", (count, key, word.decode('utf8')))
+            else:
+                cur.execute("INSERT INTO ENGLISH (key, value, count) VALUES(?, ?, 1)",  (key, word.decode('utf8')))
+            w1, w2 = w2, word
+        except Exception as e:
+            import pdb
+            pdb.set_trace()
+
+for chapter in glob.glob(args.files):
+    chapter_name = chapter.split("/")[-1].split(".")[0]
+    text = open(chapter).read().encode('utf8')
+    words = text.split(b" ")
+    markovize_words(words)
+    cur.execute("INSERT INTO chapters (chapter, text) VALUES(?,?);", (chapter_name, text))
+
