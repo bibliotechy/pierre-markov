@@ -8,10 +8,12 @@ class QuixSql():
         self._fragment = self.random_key()
         self._current_key = self._fragment
         self._values = None
+        self._chapter = None
+        self._final_fragment = False
 
     
     def generate_fragment(self):
-        while len(self.values()) > 0:
+        while (not self._final_fragment) and (len(self.values()) > 0):
             next_word = self.values().pop(randrange(len(self.values())))[0]
             possible_next_fragment = " ".join([self.fragment(), next_word])
             if self.fragment_chapter(possible_next_fragment):
@@ -21,11 +23,24 @@ class QuixSql():
                 self.generate_fragment()
             else:
                 pass
-        
-        return({"fragment": self.fragment(), "chapter": self.fragment_chapter(self.fragment())[0]})
+        self._final_fragment = True
+
+        return {"fragment": self.fragment(), "chapter": self.fragment_chapter(self.fragment())[0]}
 
     def fragment_chapter(self, fragment):
-        return self.db.execute("SELECT chapter from chapters where text like ?", (f"%{fragment}%",)).fetchone()
+        if self._chapter:
+            return self.known_fragment_chapter(fragment)
+        return self.not_yet_known_fragment_chapter(fragment)
+    
+    def not_yet_known_fragment_chapter(self, fragment):
+        chapters =  self.db.execute("SELECT chapter from chapters where text like ?", (f"%{fragment}%",)).fetchall()
+        if len(chapters) == 1:
+            self._chapter = chapters[0][0] 
+        return chapters[0] if chapters else None
+
+    def known_fragment_chapter(self, fragment):
+        chapter =  self.db.execute("SELECT chapter from chapters where text like ? and chapter=?", (f"%{fragment}%", self._chapter)).fetchone()
+        return chapter
 
     def values(self):
         if self._values is None:
@@ -40,13 +55,15 @@ class QuixSql():
 
     def random_key(self, db=None):
         _db = db if db else self.db
-        return _db.execute("SELECT key from ENGLISH ORDER BY RANDOM() LIMIT 1").fetchone()[0]
+        key =  _db.execute("SELECT key from ENGLISH ORDER BY RANDOM() LIMIT 1").fetchone()[0]
+        return key
 
     def fragment(self):
         return self._fragment
 
     def values_from(self, key):
-        return self.db.execute("SELECT value, count from ENGLISH where key=?", (key,)).fetchall() 
+        values = self.db.execute("SELECT value, count from ENGLISH where key=?", (key,)).fetchall()
+        return values
 
     def random_value_from(self, key):
         words_and_counts = self.values_from(key)

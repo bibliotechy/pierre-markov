@@ -1,0 +1,18 @@
+{
+  "name": "pierre-markov",
+  "version": "1.0.0",
+  "description": "Writing Quixote",
+  "main": "index.js",
+  "repository": "git@github.com:bibliotechy/pierre-markov",
+  "author": "chadbnelson@gmail.com",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "sql.js-httpvfs": "^0.8.12",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.4",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
+  }
+}
